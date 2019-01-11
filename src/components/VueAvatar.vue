@@ -22,11 +22,6 @@
 </template>
 
 <style type="text/css">
-canvas {
-    width: 300px;
-    height: 300px;
-}
-
 .cursorPointer{
     cursor: pointer;
 }
