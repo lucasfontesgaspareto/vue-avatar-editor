@@ -302,6 +302,7 @@ export default {
                 self.state.drag = false;
                 self.$emit('vue-avatar-editor:image-ready', self.scale);
                 self.imageLoaded = true;
+                this.$emit('imageLoaded', self.imageLoaded);
                 self.cursor = 'cursorGrab';
             };
             imageObj.onerror = (err) => console.log('error loading image: ', err);
@@ -478,6 +479,34 @@ export default {
             this.changed = true;
             reader.onload = (e) => this.loadImage(e.target.result);
             reader.readAsDataURL(files[0]);
+        },
+        resetImage () {
+            let self = this;
+            this.canvas = this.$refs.avatarEditorCanvas;
+            this.context = this.canvas.getContext('2d');
+            self.imageLoaded = false;
+            this.$emit('imageLoaded', self.imageLoaded);
+            self.state = {
+                drag: false,
+                my: null,
+                mx: null,
+                xxx: 'ab',
+                image: {
+                    x: 0,
+                    y: 0,
+                    resource: null
+                }
+            }
+            this.context.clearRect(0, 0, this.getDimensions().canvas.width, this.getDimensions().canvas.height);
+            this.paint();
+
+            var placeHolder = this.svgToImage('<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 65"><defs><style>.cls-1{fill:#000;}</style></defs><title>Upload_Upload</title><path class="cls-1" d="M32.5,1A31.5,31.5,0,1,1,1,32.5,31.54,31.54,0,0,1,32.5,1m0-1A32.5,32.5,0,1,0,65,32.5,32.5,32.5,0,0,0,32.5,0h0Z"/><polygon class="cls-1" points="41.91 28.2 32.59 18.65 23.09 28.39 24.17 29.44 31.87 21.54 31.87 40.05 33.37 40.05 33.37 21.59 40.83 29.25 41.91 28.2"/><polygon class="cls-1" points="40.66 40.35 40.66 44.35 24.34 44.35 24.34 40.35 22.34 40.35 22.34 44.35 22.34 46.35 24.34 46.35 40.66 46.35 42.66 46.35 42.66 44.35 42.66 40.35 40.66 40.35"/></svg>');
+
+            placeHolder.onload = function () {
+                var x = self.canvasWidth  / 2 - this.width  / 2;
+                var y = self.canvasHeight / 2 - this.height / 2;
+                self.context.drawImage(placeHolder, x, y, this.width, this.height);
+            };
         }
     },
     watch: {
